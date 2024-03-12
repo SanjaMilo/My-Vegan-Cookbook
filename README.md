@@ -11,8 +11,8 @@ For this project I've used:
 - React.js
 - Material UI
 - Redux toolkit
-- Express for Node.js
+- Express Node.js
 - Mongoose
-- MongoAD Atlas
+- MongoDB Atlas
 - Images from website: https://www.freepik.com/images
 - For hosting I will use some free options
