@@ -19,23 +19,31 @@ import {
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useSelector, useDispatch } from "react-redux";
-import { setRecipes } from "../redux/slices/recipesSlice";
+import { singleRecipe } from "../redux/slices/recipesSlice";
+import { setSavedRecipesIdsList, addNewRecipeInIdsList } from "../redux/slices/savedRecipesSlice";
 import { useParams, useNavigate } from "react-router-dom";
 import useHeaderHeight from "../hooks/useHeaderHeight";
 import moment from "moment";
+import { useCookies } from "react-cookie";
+
 
 const RecipeDetails = () => {
   const headerHeight = useHeaderHeight();
+  // Get a recipe Id from the URL params
+  const { _id } = useParams(); // path='/recipe-details/:_id'
+  const userID = localStorage.getItem('userID');
+  const [cookies] = useCookies(["access_token"]);
   // Local state
   const [isLoading, setIsLoading] = useState(true);
   // Get one recipe from global state
-  const recipe = useSelector((state) => state.recipes.recipes); // state.[reducer name is 'recipes'].[variable name is 'recipes']
+  const recipe = useSelector((state) => state.recipes.recipe); 
+
+  const savedRecipesList = useSelector((state) => state.savedRecipes.recipesIds);
+
+  const isRecipeSaved = (id) => savedRecipesList.includes(id); // returns boolean
 
   // dispatch actions to update state
   const dispatch = useDispatch();
-
-  // Get a recipe Id from the URL params
-  const { _id } = useParams(); // path='/recipe-details/:_id'
 
   const navigate = useNavigate();
 
@@ -48,8 +56,27 @@ const RecipeDetails = () => {
         const response = await fetch(`/api/recipes/${_id}`);
         const data = await response.json();
         if (response.ok) {
-          console.log(data);
-          dispatch(setRecipes(data));
+          dispatch(singleRecipe(data));
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchSavedRecipesIdsList = async () => {
+      try {
+        const response = await fetch(
+          `/api/recipes/savedrecipes/ids/${userID}`,
+          {
+            headers: {
+              "Authorization": `Bearer ${cookies.access_token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          dispatch(setSavedRecipesIdsList(data.savedRecipes)); // data is savedRecipes (userModel)
           setIsLoading(false);
         }
       } catch (error) {
@@ -58,8 +85,38 @@ const RecipeDetails = () => {
     };
 
     fetchRecipeDetails();
+    // Only logged in user:
+    if (cookies.access_token) fetchSavedRecipesIdsList();
     
-  }, [dispatch, _id]);
+  }, [dispatch, _id, userID, cookies.access_token]);
+
+  const saveRecipe = async (id) => {
+    try {
+      const response = await fetch(
+        "/api/recipes",
+        {
+          method: 'PUT',
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${cookies.access_token}`,
+          },
+          body: JSON.stringify({
+            userID,
+            recipeID: id
+          })
+        }
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        //console.log("Saved Recipe", data.savedRecipe);
+        dispatch(addNewRecipeInIdsList(data.savedRecipe._id)); 
+      }
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const timeFormatting = (num) => {
     const [hours, minutes] = [Math.floor(num / 60), num % 60];
@@ -74,6 +131,7 @@ const RecipeDetails = () => {
       return;
     }
   };
+
 
   return (
     <Container>
@@ -199,6 +257,8 @@ const RecipeDetails = () => {
                         sx={{ justifyContent: "space-between" }}
                       >
                         <Button
+                          onClick={() => saveRecipe(recipe._id)}
+                          disabled={(isRecipeSaved(recipe._id) || !userID) || !userID}
                           sx={{
                             mt: 2,
                             mb: 2,
@@ -212,7 +272,7 @@ const RecipeDetails = () => {
                           variant="outlined"
                         >
                           <FavoriteIcon sx={{ mr: 1 }} />
-                          Save this recipe!
+                          {isRecipeSaved(recipe._id) ? "Saved recipe" : "Save this recipe!"}
                         </Button>
                         <Button
                           onClick={() => {

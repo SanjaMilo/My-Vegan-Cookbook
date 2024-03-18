@@ -30,7 +30,7 @@ export const useLoginSignup = () => {
     }
     if (response.ok) {
       // Set the token that we send from the server with the response, into a cookie
-      setCookies("access_token", data.token);
+      setCookies("access_token", data.token, { path: '/' }); // expires: new Date(Date.now() + 3600000 * 24 * 7) expires in 7 days
       // We want to store the user id in local storage for quick access to it
       localStorage.setItem("userID", data.userID);
       // Update the global state (user)
@@ -39,7 +39,6 @@ export const useLoginSignup = () => {
       setIsLoading(false);
 
       navigate('/');
-     
     }
 
   };

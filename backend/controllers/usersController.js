@@ -80,12 +80,3 @@ export const signupUser = async (req, res) => {
     }
 };
 
-// {
-//     "email": "sanja@yahoo.com",
-//     "password": "SanjaTest100%"
-// }
-
-// {
-//     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWVkZmQ5N2U3ZDAyMjIzMGFhMmViZTEiLCJpYXQiOjE3MTAwOTU4OTUsImV4cCI6MTcxMDcwMDY5NX0.3mExLpkbW1-wx4kT8lsnzYk4cjWEzOO0UNu8Mn6gCTQ",
-//     "userID": "65edfd97e7d022230aa2ebe1"
-// }

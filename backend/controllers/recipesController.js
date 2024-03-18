@@ -58,7 +58,7 @@ export const saveRecipe = async (req, res) => {
     await user.save();
 
     // send response the array of saved recipes
-    res.status(200).json({ savedRecipes: user.savedRecipes });
+    res.status(200).json({ savedRecipes: user.savedRecipes, savedRecipe: recipe });
   } catch (error) {
     res.status(400).json({message: error.message});
   }
@@ -103,19 +103,17 @@ export const removeSavedRecipeFromList = async (req, res) => {
   const { userID } = req.params;
   const { recipeID } = req.params;
 
-  const recipeIDObjectType = new mongoose.Types.ObjectId(recipeID);
-  
-
   try {
     // get the user (by his Id) who's saved recipes list we want
     const user = await UserModel.findById(userID);
+    const recipe = await RecipeModel.findById(recipeID)
 
-    const removedSavedRecipe = user?.savedRecipes.find(id => id.equals(recipeIDObjectType));
+    const removedSavedRecipeId = user?.savedRecipes.find(id => id.equals(recipeID));
 
-    user?.savedRecipes.pull(recipeIDObjectType);
+    user?.savedRecipes.pull(recipeID);
     await user.save();
     // send response the un-saved recipe
-    res.status(200).json({ savedRecipes: user.savedRecipes, removed: removedSavedRecipe});
+    res.status(200).json({ savedRecipes: user.savedRecipes, removedRecipeId: removedSavedRecipeId, removedRecipeTitle: recipe.title});
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

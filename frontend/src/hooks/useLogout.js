@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { logoutUser } from '../redux/slices/userSlice';
 
 export const useLogout = () => {
-    const [cookies, setCookies] = useCookies(['access_token']);
+    const [cookies, setCookies, removeCookie] = useCookies(['access_token']);
 
     const navigate = useNavigate();
 
@@ -12,7 +12,8 @@ export const useLogout = () => {
 
     const logout = () => {
         // set the cookie to be empty
-        setCookies('access_token', "");
+        // setCookies('access_token', "");
+        removeCookie('access_token', { path: '/' });
         // remove the userId from local storage
         localStorage.removeItem('userID');
         // Update the global state (user)

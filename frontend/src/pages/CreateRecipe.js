@@ -43,7 +43,7 @@ const CreateRecipe = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRecipe({ ...recipe, [name]: value });
+    setRecipe({ ...recipe, [name]: value});
   };
 
   const handleRecipePropertyChange = (e, inx, property) => {
@@ -68,7 +68,7 @@ const CreateRecipe = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.access_token}`,
+          "Authorization": `Bearer ${cookies.access_token}`,
         },
         body: JSON.stringify(recipe),
       });

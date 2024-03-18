@@ -7,7 +7,7 @@ import useDebouncedValue from "../hooks/useDebouncedValue";
 
 const SearchRecipe = () => {
   const [keyword, setKeyword] = useState("");
-  const debouncedKeyword = useDebouncedValue(keyword, 500);
+  const debouncedKeyword = useDebouncedValue(keyword, 500); // 500 milliseconds delay
   // dispatch action setRecipes to update state
   const dispatch = useDispatch();
 

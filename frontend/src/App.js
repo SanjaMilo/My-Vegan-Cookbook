@@ -15,7 +15,7 @@ import { useCookies } from 'react-cookie';
 
 
 function App() {
-  const [cookies, setCookies] = useCookies(['access_token']);
+  const [cookies, _] = useCookies(['access_token']);
 
   return (
     <ThemeProvider theme={theme}>

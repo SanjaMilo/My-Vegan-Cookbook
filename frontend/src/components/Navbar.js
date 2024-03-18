@@ -4,13 +4,13 @@ import { useLogout } from "../hooks/useLogout";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 
+
 const Navbar = () => {
-  // Global state: (we can also use "cookies" to check if we have user logged in or not, in order to show or hide log in or sign up links or the log out link)
-  const [cookies, setCookies] = useCookies(['access_token']);
-  // state.[reducer name is 'user'].[variable name is 'user']
-  const user = useSelector((state) => state.user.user); 
-  
+  const [cookies, setCookies, removeCookie] = useCookies(['access_token']);
+  // Global state: (we can also use state to check if we have user logged in or not, in order to show or hide log in or sign up links or the log out link)
+  //const user = useSelector((state) => state.user.user); 
   const { logout } = useLogout();
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -56,7 +56,7 @@ const Navbar = () => {
               <Button sx={{ my: 2, display: "block" }}>Saved Recipes</Button>
             </Link>
           </Box>
-          {!user && (
+          {!cookies.access_token ? (
             <>
               <Link to="/login">
                 <Button sx={{ my: 2, display: "block" }}>Log In</Button>
@@ -65,11 +65,12 @@ const Navbar = () => {
                 <Button sx={{ my: 2, display: "block" }}>Sign Up</Button>
               </Link>
             </>
-          )}
-          {user && (
+          ) : (
+            (
             <Button onClick={logout} sx={{ my: 2, display: "block" }}>
               Log Out
             </Button>
+          )
           )}
         </Toolbar>
       </AppBar>

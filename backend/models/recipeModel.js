@@ -32,7 +32,7 @@ const RecipeSchema = new mongoose.Schema({
     userOwner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
-        required: true // false ?
+        required: true 
     }
 }, {
     timestamps: true
